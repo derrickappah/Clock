@@ -1,0 +1,20 @@
+/* Simple helper class to hide elements */
+.hidden {
+  display: none !important;
+}
+
+/* Disable pointer events when timer is running */
+.timer-running .timer-picker-column {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.timer-picker-column {
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.timer-picker-column::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
