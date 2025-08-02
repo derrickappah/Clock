@@ -1,3 +1,36 @@
+// Sound generation function
+        const playTimerSound = () => {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Create multiple beeps for attention
+                const beepTimes = [0, 0.2, 0.4, 0.6]; // 4 beeps with 200ms intervals
+                
+                beepTimes.forEach((time, index) => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    // Frequency: alternate between two tones for a more pleasant sound
+                    oscillator.frequency.setValueAtTime(index % 2 === 0 ? 800 : 1000, audioContext.currentTime + time);
+                    oscillator.type = 'sine';
+                    
+                    // Volume envelope: fade in and out
+                    gainNode.gain.setValueAtTime(0, audioContext.currentTime + time);
+                    gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + time + 0.05);
+                    gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + time + 0.15);
+                    
+                    oscillator.start(audioContext.currentTime + time);
+                    oscillator.stop(audioContext.currentTime + time + 0.15);
+                });
+            } catch (error) {
+                console.log('Audio not supported or failed:', error);
+                // Fallback: just show the notification/alert
+            }
+        };
+
 document.addEventListener("DOMContentLoaded", () => {
   // --- DOM Element Selections ---
   const stopwatchScreen = document.getElementById("stopwatch-screen");
@@ -200,6 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
       clearInterval(timerInterval);
       timerInterval = null;
       isTimerRunning = false;
+      playTimerSound();
       // Use a more modern notification if available, otherwise alert
       if ('Notification' in window && Notification.permission === 'granted') {
           new Notification("Time's up!");
