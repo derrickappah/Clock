@@ -29,8 +29,17 @@ A modern, responsive timer and stopwatch web application with beautiful visual c
 [Live Demo](https://github.com/derrickappah/Clock) 
 
 ## 📱 Screenshots
+### Timer
+<img src="screenshots/timer-input-screen.png" alt="Timer Input Screen" width="300">
+<img src="screenshots/timer-countdown-visual.png" alt="Timer Countdown with Visual Progress" width="300">
 
-*Add screenshots of your app here*
+### Stopwatch
+<img src="screenshots/stopwatch-running.png" alt="Stopwatch Running" width="300">
+<img src="screenshots/stopwatch-with-laps.png" alt="Stopwatch with Lap Times" width="300">
+
+### Mobile View
+<img src="screenshots/mobile-timer-view.png" alt="Mobile Timer View" width="250">
+<img src="screenshots/mobile-stopwatch-view.png" alt="Mobile Stopwatch View" width="250">
 
 ## 🛠️ Technologies Used
 
