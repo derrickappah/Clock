@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clock App</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Manrope%3Awght%40400%3B500%3B700%3B800&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div
+      class="relative flex size-full min-h-screen flex-col bg-[#121417] dark group/design-root overflow-x-hidden pb-20"
+      style='font-family: Manrope, "Noto Sans", sans-serif;'
+    >
+      <!-- App Screens Container -->
+      <div class="flex-1">
+        <!-- Stopwatch Screen -->
+        <div id="stopwatch-screen" class="hidden">
+          <div class="flex items-center bg-[#121417] p-4 pb-2 justify-between">
+            <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pl-12 pr-12">Stopwatch</h2>
+          </div>
+          <h1 id="stopwatch-display" class="text-white tracking-light text-[32px] font-bold leading-tight px-4 text-center pb-3 pt-6">00:00:00.00</h1>
+          <div class="flex justify-center">
+            <div class="flex flex-1 gap-3 flex-wrap px-4 py-3 max-w-[480px] justify-center">
+              <button
+                id="stopwatch-start-stop-btn"
+                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#adc9ea] text-[#121417] text-sm font-bold leading-normal tracking-[0.015em] grow"
+              >
+                <span class="truncate">Start</span>
+              </button>
+              <button
+                id="stopwatch-lap-reset-btn"
+                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#2b3036] text-white text-sm font-bold leading-normal tracking-[0.015em] grow"
+              >
+                <span class="truncate">Lap</span>
+              </button>
+            </div>
+          </div>
+          <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Laps</h3>
+          <div id="laps-container" class="pb-4">
+            <!-- Laps will be dynamically inserted here -->
+          </div>
+        </div>
+
+        <!-- Timer Screen -->
+        <div id="timer-screen">
+          <div class="flex items-center bg-[#121417] p-4 pb-2 justify-between">
+            <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pl-12 pr-12">Timer</h2>
+          </div>
+          <div id="timer-display-area" class="hidden flex-col justify-center items-center h-80 px-4">
+            <!-- Circular Progress Ring -->
+            <div class="relative mb-6">
+              <svg class="w-48 h-48 transform -rotate-90" viewBox="0 0 200 200">
+                <!-- Background circle -->
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="85"
+                  stroke="#2b3036"
+                  stroke-width="8"
+                  fill="none"
+                />
+                <!-- Progress circle -->
+                <circle
+                  id="timer-progress-circle"
+                  cx="100"
+                  cy="100"
+                  r="85"
+                  stroke="#adc9ea"
+                  stroke-width="8"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-dasharray="534.07"
+                  stroke-dashoffset="534.07"
+                  class="transition-all duration-1000 ease-linear"
+                />
+              </svg>
+              <!-- Timer display in center -->
+              <div class="absolute inset-0 flex items-center justify-center">
+                <h1 id="timer-countdown-display" class="text-white text-3xl font-bold text-center leading-tight">00:00:00</h1>
+              </div>
+            </div>
+            
+            <!-- Progress bar alternative for smaller screens -->
+            <div class="w-full max-w-md mb-4 lg:hidden">
+              <div class="w-full bg-[#2b3036] rounded-full h-3">
+                <div id="timer-progress-bar" class="bg-[#adc9ea] h-3 rounded-full transition-all duration-1000 ease-linear" style="width: 100%"></div>
+              </div>
+            </div>
+            
+            <!-- Time remaining text -->
+            <p id="timer-remaining-text" class="text-[#5a6572] text-sm text-center">Time remaining</p>
+          </div>
+          <div id="timer-picker-area" class="px-4 py-6">
+            <div class="mb-6">
+              <input 
+                id="timer-input" 
+                type="text" 
+                placeholder="Enter time (e.g., 5m 30s, 1h 15m, 90s)"
+                class="w-full bg-[#2b3036] text-white text-lg px-4 py-3 rounded-lg border border-[#3a4047] focus:border-[#adc9ea] focus:outline-none placeholder-[#5a6572]"
+              />
+              <p class="text-[#5a6572] text-sm mt-2 px-1">Examples: 5m, 1h 30m, 90s, 2h 15m 30s</p>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-3 mb-4">
+              <button class="timer-preset bg-[#2b3036] hover:bg-[#3a4047] text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors" data-seconds="300">5m</button>
+              <button class="timer-preset bg-[#2b3036] hover:bg-[#3a4047] text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors" data-seconds="600">10m</button>
+              <button class="timer-preset bg-[#2b3036] hover:bg-[#3a4047] text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors" data-seconds="900">15m</button>
+              <button class="timer-preset bg-[#2b3036] hover:bg-[#3a4047] text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors" data-seconds="1200">20m</button>
+              <button class="timer-preset bg-[#2b3036] hover:bg-[#3a4047] text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors" data-seconds="1800">30m</button>
+              <button class="timer-preset bg-[#2b3036] hover:bg-[#3a4047] text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors" data-seconds="3600">1h</button>
+            </div>
+            
+            <div id="timer-preview" class="text-center py-4">
+              <p class="text-[#5a6572] text-sm mb-1">Timer Duration</p>
+              <p id="timer-preview-text" class="text-white text-2xl font-bold">00:00:00</p>
+            </div>
+          </div>
+          <div class="flex justify-center">
+            <div class="flex flex-1 gap-3 flex-wrap px-4 py-3 max-w-[480px] justify-center">
+              <button
+                id="timer-start-pause-btn"
+                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#adc9ea] text-[#121417] text-sm font-bold leading-normal tracking-[0.015em] grow"
+              >
+                <span class="truncate">Start</span>
+              </button>
+              <button
+                id="timer-reset-btn"
+                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#2b3036] text-white text-sm font-bold leading-normal tracking-[0.015em] grow"
+              >
+                <span class="truncate">Reset</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Navigation -->
+      <div id="navigation" class="fixed bottom-0 left-0 right-0 z-10">
+        <div class="flex gap-2 border-t border-[#2b3036] bg-[#1d2125] px-4 pb-3 pt-2">
+          <a id="nav-timer" class="just flex flex-1 flex-col items-center justify-end gap-1 rounded-full text-white" href="#">
+            <div class="text-inherit flex h-8 items-center justify-center" data-icon="Timer" data-size="24px" data-weight="fill">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm45.66,61.66-40,40a8,8,0,0,1-11.32-11.32l40-40a8,8,0,0,1,11.32,11.32ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z"></path>
+              </svg>
+            </div>
+            <p class="text-inherit text-xs font-medium leading-normal tracking-[0.015em]">Timer</p>
+          </a>
+          <a id="nav-stopwatch" class="just flex flex-1 flex-col items-center justify-end gap-1 text-[#a1aab5]" href="#">
+            <div class="text-inherit flex h-8 items-center justify-center" data-icon="Timer" data-size="24px" data-weight="regular">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM173.66,90.34a8,8,0,0,1,0,11.32l-40,40a8,8,0,0,1-11.32-11.32l40-40A8,8,0,0,1,173.66,90.34ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z"></path>
+              </svg>
+            </div>
+            <p class="text-inherit text-xs font-medium leading-normal tracking-[0.015em]">Stopwatch</p>
+          </a>
+        </div>
+        <div class="h-5 bg-[#1d2125]"></div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+            </html>
