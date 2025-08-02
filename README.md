@@ -26,7 +26,7 @@ A modern, responsive timer and stopwatch web application with beautiful visual c
 
 ## 🚀 Demo
 
-[Live Demo](https://github.com/derrickappah/Clock) 
+[Live Demo](https://derrickappah.github.io/Clock/) 
 
 ## 📱 Screenshots
 ### Timer
