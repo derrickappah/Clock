@@ -50,7 +50,7 @@
         </div>
 
         <!-- Timer Screen -->
-        <div id="timer-screen">
+        <div id="timer-screen" class="hidden">
           <div class="flex items-center bg-[#121417] p-4 pb-2 justify-between">
             <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pl-12 pr-12">Timer</h2>
           </div>
@@ -140,15 +140,61 @@
             </div>
           </div>
         </div>
+
+        <!-- Clock Screen -->
+        <div id="clock-screen">
+          <div class="flex items-center bg-[#121417] p-4 pb-2 justify-between">
+            <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pl-12 pr-12">Clock</h2>
+          </div>
+          <div class="flex flex-col justify-center items-center h-[calc(100vh-200px)]">
+            <div class="relative w-64 h-64">
+              <!-- Clock Face -->
+              <div class="absolute inset-0 rounded-full bg-[#2b3036] border-4 border-[#3a4047]"></div>
+              <!-- Hour Hand -->
+              <div id="hour-hand" class="absolute w-2 h-20 bg-white rounded top-1/2 left-1/2 -translate-x-1/2 -translate-y-full origin-bottom"></div>
+              <!-- Minute Hand -->
+              <div id="minute-hand" class="absolute w-1.5 h-28 bg-white rounded top-1/2 left-1/2 -translate-x-1/2 -translate-y-full origin-bottom"></div>
+              <!-- Second Hand -->
+              <div id="second-hand" class="absolute w-0.5 h-32 bg-[#adc9ea] rounded top-1/2 left-1/2 -translate-x-1/2 -translate-y-full origin-bottom"></div>
+              <!-- Center Dot -->
+              <div class="absolute w-4 h-4 bg-white rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+              <!-- Hour Markers -->
+              <div class="absolute inset-0">
+                <div class="clock-markers">
+                  <div class="absolute w-full h-full">
+                    <!-- 12 -->
+                    <div class="absolute text-white text-sm font-bold top-2 left-1/2 -translate-x-1/2">12</div>
+                    <!-- 3 -->
+                    <div class="absolute text-white text-sm font-bold right-2 top-1/2 -translate-y-1/2">3</div>
+                    <!-- 6 -->
+                    <div class="absolute text-white text-sm font-bold bottom-2 left-1/2 -translate-x-1/2">6</div>
+                    <!-- 9 -->
+                    <div class="absolute text-white text-sm font-bold left-2 top-1/2 -translate-y-1/2">9</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Digital Time Display -->
+            <p id="digital-time" class="text-white text-2xl font-bold mt-4">00:00:00</p>
+          </div>
+        </div>
       </div>
 
       <!-- Bottom Navigation -->
       <div id="navigation" class="fixed bottom-0 left-0 right-0 z-10">
         <div class="flex gap-2 border-t border-[#2b3036] bg-[#1d2125] px-4 pb-3 pt-2">
-          <a id="nav-timer" class="just flex flex-1 flex-col items-center justify-end gap-1 rounded-full text-white" href="#">
-            <div class="text-inherit flex h-8 items-center justify-center" data-icon="Timer" data-size="24px" data-weight="fill">
+          <a id="nav-clock" class="just flex flex-1 flex-col items-center justify-end gap-1 text-white" href="#">
+            <div class="text-inherit flex h-8 items-center justify-center" data-icon="Clock" data-size="24px" data-weight="fill">
               <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                <path d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm45.66,61.66-40,40a8,8,0,0,1-11.32-11.32l40-40a8,8,0,0,1,11.32,11.32ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z"></path>
+                <path d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM128,72a8,8,0,0,0-8,8v48H88a8,8,0,0,0,0,16h40a8,8,0,0,0,8-8V80A8,8,0,0,0,128,72Z"></path>
+              </svg>
+            </div>
+            <p class="text-inherit text-xs font-medium leading-normal tracking-[0.015em]">Clock</p>
+          </a>
+          <a id="nav-timer" class="just flex flex-1 flex-col items-center justify-end gap-1 text-[#a1aab5]" href="#">
+            <div class="text-inherit flex h-8 items-center justify-center" data-icon="Timer" data-size="24px" data-weight="regular">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM173.66,90.34a8,8,0,0,1,0,11.32l-40,40a8,8,0,0,1-11.32-11.32l40-40A8,8,0,0,1,173.66,90.34ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z"></path>
               </svg>
             </div>
             <p class="text-inherit text-xs font-medium leading-normal tracking-[0.015em]">Timer</p>
@@ -156,7 +202,7 @@
           <a id="nav-stopwatch" class="just flex flex-1 flex-col items-center justify-end gap-1 text-[#a1aab5]" href="#">
             <div class="text-inherit flex h-8 items-center justify-center" data-icon="Timer" data-size="24px" data-weight="regular">
               <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                <path d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM173.66,90.34a8,8,0,0,1,0,11.32l-40,40a8,8,0,0,1-11.32-11.32l40-40A8,8,0,0,1,173.66,90.34ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z"></path>
+                <path d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm45.66,61.66-40,40a8,8,0,0,1-11.32-11.32l40-40a8,8,0,0,1,11.32,11.32ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z"></path>
               </svg>
             </div>
             <p class="text-inherit text-xs font-medium leading-normal tracking-[0.015em]">Stopwatch</p>
@@ -165,7 +211,6 @@
         <div class="h-5 bg-[#1d2125]"></div>
       </div>
     </div>
-
     <script src="script.js"></script>
   </body>
-            </html>
+</html>
