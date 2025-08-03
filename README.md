@@ -33,7 +33,7 @@ A modern, responsive web application featuring a Clock, Timer, and Stopwatch wit
 
 ## 🚀 Demo
 
-[Live Demo]([#](https://derrickappah.github.io/Clock/))   
+[Live Demo](https://derrickappah.github.io/Clock/)   
 
 ## 📱 Screenshots
 
