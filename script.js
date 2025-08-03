@@ -1,41 +1,43 @@
 // Sound generation function
-        const playTimerSound = () => {
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // Create multiple beeps for attention
-                const beepTimes = [0, 0.2, 0.4, 0.6]; // 4 beeps with 200ms intervals
-                
-                beepTimes.forEach((time, index) => {
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    // Frequency: alternate between two tones for a more pleasant sound
-                    oscillator.frequency.setValueAtTime(index % 2 === 0 ? 800 : 1000, audioContext.currentTime + time);
-                    oscillator.type = 'sine';
-                    
-                    // Volume envelope: fade in and out
-                    gainNode.gain.setValueAtTime(0, audioContext.currentTime + time);
-                    gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + time + 0.05);
-                    gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + time + 0.15);
-                    
-                    oscillator.start(audioContext.currentTime + time);
-                    oscillator.stop(audioContext.currentTime + time + 0.15);
-                });
-            } catch (error) {
-                console.log('Audio not supported or failed:', error);
-                // Fallback: just show the notification/alert
-            }
-        };
+const playTimerSound = () => {
+  try {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    // Create multiple beeps for attention
+    const beepTimes = [0, 0.2, 0.4, 0.6]; // 4 beeps with 200ms intervals
+    
+    beepTimes.forEach((time, index) => {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      // Frequency: alternate between two tones for a more pleasant sound
+      oscillator.frequency.setValueAtTime(index % 2 === 0 ? 800 : 1000, audioContext.currentTime + time);
+      oscillator.type = 'sine';
+      
+      // Volume envelope: fade in and out
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime + time);
+      gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + time + 0.05);
+      gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + time + 0.15);
+      
+      oscillator.start(audioContext.currentTime + time);
+      oscillator.stop(audioContext.currentTime + time + 0.15);
+    });
+  } catch (error) {
+    console.log('Audio not supported or failed:', error);
+    // Fallback: just show the notification/alert
+  }
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   // --- DOM Element Selections ---
   const stopwatchScreen = document.getElementById("stopwatch-screen");
   const timerScreen = document.getElementById("timer-screen");
+  const clockScreen = document.getElementById("clock-screen");
   const navTimer = document.getElementById("nav-timer");
+  const navClock = document.getElementById("nav-clock");
   const navStopwatch = document.getElementById("nav-stopwatch");
 
   // --- Stopwatch Elements ---
@@ -56,6 +58,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const timerInput = document.getElementById("timer-input");
   const timerPreviewText = document.getElementById("timer-preview-text");
   const timerPresets = document.querySelectorAll(".timer-preset");
+
+  // --- Clock Elements ---
+  const hourHand = document.getElementById("hour-hand");
+  const minuteHand = document.getElementById("minute-hand");
+  const secondHand = document.getElementById("second-hand");
+  const digitalTime = document.getElementById("digital-time");
 
   // --- Stopwatch State ---
   let stopwatchInterval = null;
@@ -82,10 +90,10 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   
   const formatTimerCountdown = (totalSeconds) => {
-      const hours = Math.floor(totalSeconds / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
-      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   };
 
   // --- Stopwatch Logic ---
@@ -140,89 +148,89 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Timer Logic ---
   const parseTimeInput = (input) => {
-      if (!input.trim()) return 0;
-      
-      // Remove extra spaces and make lowercase
-      input = input.toLowerCase().replace(/\s+/g, ' ').trim();
-      
-      let totalSeconds = 0;
-      
-      // Match patterns like "1h", "30m", "45s", "1h 30m", "2h 15m 30s", etc.
-      const patterns = [
-          { regex: /(\d+(?:\.\d+)?)\s*h(?:ours?)?/g, multiplier: 3600 },
-          { regex: /(\d+(?:\.\d+)?)\s*m(?:in(?:utes?)?)?/g, multiplier: 60 },
-          { regex: /(\d+(?:\.\d+)?)\s*s(?:ec(?:onds?)?)?/g, multiplier: 1 }
-      ];
-      
-      patterns.forEach(({ regex, multiplier }) => {
-          let match;
-          while ((match = regex.exec(input)) !== null) {
-              totalSeconds += parseFloat(match[1]) * multiplier;
-          }
-      });
-      
-      // If no units found, treat as seconds
-      if (totalSeconds === 0 && /^\d+(?:\.\d+)?$/.test(input)) {
-          totalSeconds = parseFloat(input);
+    if (!input.trim()) return 0;
+    
+    // Remove extra spaces and make lowercase
+    input = input.toLowerCase().replace(/\s+/g, ' ').trim();
+    
+    let totalSeconds = 0;
+    
+    // Match patterns like "1h", "30m", "45s", "1h 30m", "2h 15m 30s", etc.
+    const patterns = [
+      { regex: /(\d+(?:\.\d+)?)\s*h(?:ours?)?/g, multiplier: 3600 },
+      { regex: /(\d+(?:\.\d+)?)\s*m(?:in(?:utes?)?)?/g, multiplier: 60 },
+      { regex: /(\d+(?:\.\d+)?)\s*s(?:ec(?:onds?)?)?/g, multiplier: 1 }
+    ];
+    
+    patterns.forEach(({ regex, multiplier }) => {
+      let match;
+      while ((match = regex.exec(input)) !== null) {
+        totalSeconds += parseFloat(match[1]) * multiplier;
       }
-      
-      return Math.floor(totalSeconds);
+    });
+    
+    // If no units found, treat as seconds
+    if (totalSeconds === 0 && /^\d+(?:\.\d+)?$/.test(input)) {
+      totalSeconds = parseFloat(input);
+    }
+    
+    return Math.floor(totalSeconds);
   };
   
   const updateTimerPreview = () => {
-      const seconds = parseTimeInput(timerInput.value);
-      timerDuration = seconds;
-      timerPreviewText.textContent = formatTimerCountdown(seconds);
+    const seconds = parseTimeInput(timerInput.value);
+    timerDuration = seconds;
+    timerPreviewText.textContent = formatTimerCountdown(seconds);
   };
   
-  const setTimerPreset = (seconds) => {
-      timerDuration = seconds;
-      const hours = Math.floor(seconds / 3600);
-      const minutes = Math.floor((seconds % 3600) / 60);
-      const secs = seconds % 60;
+  const updateTimerVisuals = () => {
+    // Update countdown display
+    timerCountdownDisplay.textContent = formatTimerCountdown(timeRemaining);
+    
+    // Calculate progress percentage
+    const progress = initialDuration > 0 ? (timeRemaining / initialDuration) : 0;
+    
+    // Update circular progress (circumference = 2 * π * radius = 2 * π * 85 ≈ 534.07)
+    const circumference = 534.07;
+    const offset = circumference - (progress * circumference);
+    timerProgressCircle.style.strokeDashoffset = offset;
+    
+    // Update progress bar
+    timerProgressBar.style.width = `${progress * 100}%`;
+    
+    // Update remaining text with more descriptive info
+    if (timeRemaining > 0) {
+      const hours = Math.floor(timeRemaining / 3600);
+      const minutes = Math.floor((timeRemaining % 3600) / 60);
+      const seconds = timeRemaining % 60;
       
-      let timeStr = '';
-      if (hours > 0) timeStr += `${hours}h `;
-      if (minutes > 0) timeStr += `${minutes}m `;
-      if (secs > 0 || (hours === 0 && minutes === 0)) timeStr += `${secs}s`;
-      
-      timerInput.value = timeStr.trim();
-      updateTimerPreview();
+      let remainingText = '';
+      if (hours > 0) {
+        remainingText = `${hours} hour${hours > 1 ? 's' : ''} remaining`;
+      } else if (minutes > 0) {
+        remainingText = `${minutes} minute${minutes > 1 ? 's' : ''} remaining`;
+      } else {
+        remainingText = `${seconds} second${seconds > 1 ? 's' : ''} remaining`;
+      }
+      timerRemainingText.textContent = remainingText;
+    } else {
+      timerRemainingText.textContent = 'Timer finished';
+    }
   };
 
-  const updateTimerVisuals = () => {
-      // Update countdown display
-      timerCountdownDisplay.textContent = formatTimerCountdown(timeRemaining);
-      
-      // Calculate progress percentage
-      const progress = initialDuration > 0 ? (timeRemaining / initialDuration) : 0;
-      
-      // Update circular progress (circumference = 2 * π * radius = 2 * π * 85 ≈ 534.07)
-      const circumference = 534.07;
-      const offset = circumference - (progress * circumference);
-      timerProgressCircle.style.strokeDashoffset = offset;
-      
-      // Update progress bar
-      timerProgressBar.style.width = `${progress * 100}%`;
-      
-      // Update remaining text with more descriptive info
-      if (timeRemaining > 0) {
-          const hours = Math.floor(timeRemaining / 3600);
-          const minutes = Math.floor((timeRemaining % 3600) / 60);
-          const seconds = timeRemaining % 60;
-          
-          let remainingText = '';
-          if (hours > 0) {
-              remainingText = `${hours} hour${hours > 1 ? 's' : ''} remaining`;
-          } else if (minutes > 0) {
-              remainingText = `${minutes} minute${minutes > 1 ? 's' : ''} remaining`;
-          } else {
-              remainingText = `${seconds} second${seconds > 1 ? 's' : ''} remaining`;
-          }
-          timerRemainingText.textContent = remainingText;
-      } else {
-          timerRemainingText.textContent = 'Timer finished';
-      }
+  const setTimerPreset = (seconds) => {
+    timerDuration = seconds;
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    
+    let timeStr = '';
+    if (hours > 0) timeStr += `${hours}h `;
+    if (minutes > 0) timeStr += `${minutes}m `;
+    if (secs > 0 || (hours === 0 && minutes === 0)) timeStr += `${secs}s`;
+    
+    timerInput.value = timeStr.trim();
+    updateTimerPreview();
   };
 
   const tick = () => {
@@ -232,71 +240,116 @@ document.addEventListener("DOMContentLoaded", () => {
     if (timeRemaining <= 0) {
       clearInterval(timerInterval);
       timerInterval = null;
-      isTimerRunning = false;
+      isTimerRunning = false;         
       playTimerSound();
       // Use a more modern notification if available, otherwise alert
       if ('Notification' in window && Notification.permission === 'granted') {
-          new Notification("Time's up!");
+        new Notification("Time's up!");
       } else {
-          alert("Time's up!");
+        alert("Time's up!");
       }
       resetTimer();
     }
   };
 
   const startPauseTimer = () => {
-      if (!isTimerRunning) { // Start or Resume
-          if (timeRemaining === 0) { // If starting from scratch
-              timeRemaining = timerDuration;
-              initialDuration = timerDuration;
-          }
-          if (timeRemaining <= 0) return; // Don't start if time is zero
-
-          isTimerRunning = true;
-          timerInterval = setInterval(tick, 1000);
-          timerStartPauseBtn.querySelector('span').textContent = 'Pause';
-          timerPickerArea.classList.add('hidden');
-          timerDisplayArea.classList.remove('hidden');
-          timerDisplayArea.classList.add('flex');
-          updateTimerVisuals();
-
-      } else { // Pause
-          isTimerRunning = false;
-          clearInterval(timerInterval);
-          timerInterval = null;
-          timerStartPauseBtn.querySelector('span').textContent = 'Resume';
+    if (!isTimerRunning) { // Start or Resume
+      if (timeRemaining === 0) { // If starting from scratch
+        timeRemaining = timerDuration;
+        initialDuration = timerDuration;
       }
+      if (timeRemaining <= 0) return; // Don't start if time is zero
+
+      isTimerRunning = true;
+      timerInterval = setInterval(tick, 1000);
+      timerStartPauseBtn.querySelector('span').textContent = 'Pause';
+      timerPickerArea.classList.add('hidden');
+      timerDisplayArea.classList.remove('hidden');
+      timerDisplayArea.classList.add('flex');
+      updateTimerVisuals();
+
+    } else { // Pause
+      isTimerRunning = false;
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerStartPauseBtn.querySelector('span').textContent = 'Resume';
+    }
   };
   
   const resetTimer = () => {
-      clearInterval(timerInterval);
-      timerInterval = null;
-      isTimerRunning = false;
-      timeRemaining = 0;
-      initialDuration = 0;
-      timerStartPauseBtn.querySelector('span').textContent = 'Start';
-      timerPickerArea.classList.remove('hidden');
-      timerDisplayArea.classList.add('hidden');
-      timerDisplayArea.classList.remove('flex');
-      
-      // Reset visual elements
-      timerProgressCircle.style.strokeDashoffset = '534.07';
-      timerProgressBar.style.width = '100%';
+    clearInterval(timerInterval);
+    timerInterval = null;
+    isTimerRunning = false;
+    timeRemaining = 0;
+    initialDuration = 0;
+    timerStartPauseBtn.querySelector('span').textContent = 'Start';
+    timerPickerArea.classList.remove('hidden');
+    timerDisplayArea.classList.add('hidden');
+    timerDisplayArea.classList.remove('flex');
+    
+    // Reset visual elements
+    timerProgressCircle.style.strokeDashoffset = '534.07';
+    timerProgressBar.style.width = '100%';
   };
 
+  // --- Clock Logic ---
+  const updateClock = () => {
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12; // Convert to 12-hour format, with 0 becoming 12
+
+    // Calculate rotation angles for analog clock
+    const hoursDeg = (hours + minutes / 60) * 30; // 360° / 12 hours = 30° per hour
+    const minutesDeg = (minutes + seconds / 60) * 6; // 360° / 60 minutes = 6° per minute
+    const secondsDeg = seconds * 6; // 360° / 60 seconds = 6° per second
+
+    // Apply rotations to clock hands
+    hourHand.style.transform = `translate(-50%, -100%) rotate(${hoursDeg}deg)`;
+    minuteHand.style.transform = `translate(-50%, -100%) rotate(${minutesDeg}deg)`;
+    secondHand.style.transform = `translate(-50%, -100%) rotate(${secondsDeg}deg)`;
+
+    // Update digital time display in 12-hour format
+    digitalTime.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} ${ampm}`;
+  };
+
+  // Start clock and update every second
+  updateClock();
+  const clockInterval = setInterval(updateClock, 1000);
+
   // --- Navigation Logic ---
-  const setActiveNav = (activeElement, inactiveElement) => {
-      const activeIconContainer = activeElement.querySelector('[data-icon]');
-      const inactiveIconContainer = inactiveElement.querySelector('[data-icon]');
+  const setActiveNav = (activeElement, inactiveElement1, inactiveElement2) => {
+    const activeIconContainer = activeElement.querySelector('[data-icon]');
+    const inactiveIconContainer1 = inactiveElement1.querySelector('[data-icon]');
+    const inactiveIconContainer2 = inactiveElement2.querySelector('[data-icon]');
 
-      activeElement.classList.remove('text-[#a1aab5]');
-      activeElement.classList.add('text-white');
-      inactiveElement.classList.remove('text-white');
-      inactiveElement.classList.add('text-[#a1aab5]');
+    activeElement.classList.remove('text-[#a1aab5]');
+    activeElement.classList.add('text-white');
+    inactiveElement1.classList.remove('text-white');
+    inactiveElement1.classList.add('text-[#a1aab5]');
+    inactiveElement2.classList.remove('text-white');
+    inactiveElement2.classList.add('text-[#a1aab5]');
 
+    if (activeElement === navClock) {
+      activeIconContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM128,72a8,8,0,0,0-8,8v48H88a8,8,0,0,0,0,16h40a8,8,0,0,0,8-8V80A8,8,0,0,0,128,72Z"></path></svg>`;
+    } else {
       activeIconContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm45.66,61.66-40,40a8,8,0,0,1-11.32-11.32l40-40a8,8,0,0,1,11.32,11.32ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z"></path></svg>`;
-      inactiveIconContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM173.66,90.34a8,8,0,0,1,0,11.32l-40,40a8,8,0,0,1-11.32-11.32l40-40A8,8,0,0,1,173.66,90.34ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z"></path></svg>`;
-  }
+    }
+
+    if (inactiveElement1 === navClock) {
+      inactiveIconContainer1.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM128,72a8,8,0,0,0-8,8v48H88a8,8,0,0,0,0,16h40a8,8,0,0,0,8-8V80A8,8,0,0,0,128,72Z"></path></svg>`;
+    } else {
+      inactiveIconContainer1.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM173.66,90.34a8,8,0,0,1,0,11.32l-40,40a8,8,0,0,1-11.32-11.32l40-40A8,8,0,0,1,173.66,90.34ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z"></path></svg>`;
+    }
+
+    if (inactiveElement2 === navClock) {
+      inactiveIconContainer2.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM128,72a8,8,0,0,0-8,8v48H88a8,8,0,0,0,0,16h40a8,8,0,0,0,8-8V80A8,8,0,0,0,128,72Z"></path></svg>`;
+    } else {
+      inactiveIconContainer2.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM173.66,90.34a8,8,0,0,1,0,11.32l-40,40a8,8,0,0,1-11.32-11.32l40-40A8,8,0,0,1,173.66,90.34ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z"></path></svg>`;
+    }
+  };
 
   // --- Event Listeners ---
   startStopBtn.addEventListener("click", startStopwatch);
@@ -311,32 +364,41 @@ document.addEventListener("DOMContentLoaded", () => {
   timerStartPauseBtn.addEventListener('click', startPauseTimer);
   timerResetBtn.addEventListener('click', resetTimer);
   
-  // Timer input and preset event listeners
   timerInput.addEventListener('input', updateTimerPreview);
   timerPresets.forEach(preset => {
-      preset.addEventListener('click', () => {
-          setTimerPreset(parseInt(preset.dataset.seconds));
-      });
+    preset.addEventListener('click', () => {
+      setTimerPreset(parseInt(preset.dataset.seconds));
+    });
   });
 
   navTimer.addEventListener("click", (e) => {
     e.preventDefault();
     timerScreen.classList.remove("hidden");
     stopwatchScreen.classList.add("hidden");
-    setActiveNav(navTimer, navStopwatch);
+    clockScreen.classList.add("hidden");
+    setActiveNav(navTimer, navStopwatch, navClock);
+  });
+
+  navClock.addEventListener("click", (e) => {
+    e.preventDefault();
+    clockScreen.classList.remove("hidden");
+    timerScreen.classList.add("hidden");
+    stopwatchScreen.classList.add("hidden");
+    setActiveNav(navClock, navTimer, navStopwatch);
   });
 
   navStopwatch.addEventListener("click", (e) => {
     e.preventDefault();
     stopwatchScreen.classList.remove("hidden");
     timerScreen.classList.add("hidden");
-    setActiveNav(navStopwatch, navTimer);
+    clockScreen.classList.add("hidden");
+    setActiveNav(navStopwatch, navTimer, navClock);
   });
 
   // --- Initial Setup ---
   updateTimerPreview();
   // Request notification permission on load
   if ('Notification' in window && Notification.permission !== 'denied') {
-      Notification.requestPermission();
+    Notification.requestPermission();
   }
 });
