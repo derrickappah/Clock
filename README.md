@@ -33,7 +33,7 @@ A modern, responsive web application featuring a Clock, Timer, and Stopwatch wit
 
 ## 🚀 Demo
 
-[Live Demo](#)   
+[Live Demo]([#](https://derrickappah.github.io/Clock/))   
 
 ## 📱 Screenshots
 
@@ -63,7 +63,7 @@ A modern, responsive web application featuring a Clock, Timer, and Stopwatch wit
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/clock-app.git
+   git clone https://derrickappah.github.io/Clock/
    ```
 
 2. Navigate to the project directory:
