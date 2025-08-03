@@ -5,16 +5,27 @@
 
 /* Disable pointer events when timer is running */
 .timer-running .timer-picker-column {
-    pointer-events: none;
-    opacity: 0.5;
+  pointer-events: none;
+  opacity: 0.5;
 }
 
+/* Smooth scrolling for timer picker */
 .timer-picker-column {
   scroll-behavior: smooth;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
+/* Hide scrollbar for Chrome, Safari, and Opera */
 .timer-picker-column::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
+  display: none;
+}
+
+/* Digital time styling */
+#digital-time {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  margin-top: 1rem;
 }
